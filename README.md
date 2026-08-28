@@ -3,6 +3,9 @@
 Portfolio de développeuse mobile construit avec **Next.js 15** (App Router) et **TypeScript**.
 Le site est une application mobile : le téléphone au centre est réellement navigable.
 
+# Qui est Koffi Amoin Rosine
+
+Développeuse mobile Flutter à Abidjan, deux ans d'applications menées jusqu'en production. MVVM et Clean Architecture, Provider, API REST, Laravel côté serveur. Ancienne Product Manager, je développe en sachant à quoi sert la fonctionnalité. Disponible en CDI ou en freelance.
 ## Démarrer
 
 ```bash
