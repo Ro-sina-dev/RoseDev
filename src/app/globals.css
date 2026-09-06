@@ -19,7 +19,10 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-text-size-adjust:100%}
+/* Barre de défilement masquée : le défilement reste possible partout
+   (molette, doigt, clavier), seul l'ascenseur disparaît. */
+html{-webkit-text-size-adjust:100%;scrollbar-width:none;-ms-overflow-style:none}
+html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none}
 body{
   font-family:var(--body);
   color:var(--ink);
@@ -31,17 +34,6 @@ body{
 a{color:inherit}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 :focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:3px}
-
-/* ---------- chrome ---------- */
-.site-head{
-  display:flex;justify-content:space-between;align-items:center;gap:16px;
-  padding:18px clamp(16px,4vw,46px);
-  font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--ink-soft);
-  border-bottom:1px solid var(--rule);
-}
-.site-head b{color:var(--ink);font-weight:500}
-.head-dot{width:6px;height:6px;border-radius:50%;background:var(--lagoon);display:inline-block;margin-right:7px;vertical-align:1px}
 
 /* ---------- stage ---------- */
 .stage{
@@ -55,6 +47,30 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
 /* ---------- phone ---------- */
 .device-col{display:flex;flex-direction:column;align-items:center;gap:20px}
+
+/* Le conteneur porte la perspective (point de fuite commun) et l'arrivée. */
+.device-wrap{
+  position:relative;flex:none;
+  perspective:1100px;
+  animation:deviceIn 1.1s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes deviceIn{
+  from{opacity:0;translate:0 38px;scale:.94}
+  to{opacity:1;translate:0 0;scale:1}
+}
+/* Ombre portée au sol : respire en opposition de la lévitation. */
+.device-wrap::after{
+  content:"";position:absolute;z-index:-1;
+  left:50%;bottom:-34px;width:72%;height:28px;
+  translate:-50% 0;border-radius:50%;
+  background:radial-gradient(50% 50% at 50% 50%,rgba(21,17,13,.38),rgba(21,17,13,0) 72%);
+  animation:shadowBreathe 7s ease-in-out infinite;
+}
+@keyframes shadowBreathe{
+  0%,100%{opacity:.9;scale:1}
+  50%{opacity:.62;scale:.88}
+}
+
 .device{
   position:relative;
   width:326px;height:668px;
@@ -66,7 +82,23 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
     0 46px 70px -28px rgba(21,17,13,.55),
     0 14px 26px -14px rgba(21,17,13,.4);
   flex:none;
+  /* `translate` porte la lévitation, `transform` l'inclinaison : deux
+     propriétés distinctes, donc les deux effets se cumulent sans conflit. */
+  animation:deviceFloat 7s ease-in-out infinite;
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:transform .55s cubic-bezier(.22,1,.36,1);
+  will-change:transform,translate;
 }
+@keyframes deviceFloat{
+  0%,100%{translate:0 0}
+  50%{translate:0 -10px}
+}
+@keyframes deviceFloatSmall{
+  0%,100%{translate:0 0}
+  50%{translate:0 -5px}
+}
+/* Sous le pointeur, la réponse doit coller au doigt : on raccourcit. */
+.device.is-tilting{transition:transform .1s linear}
 .device::after{ /* side button */
   content:"";position:absolute;right:-2px;top:186px;width:3px;height:74px;
   border-radius:0 3px 3px 0;background:linear-gradient(#4A5058,#20242A);
@@ -94,6 +126,31 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   position:absolute;top:0;left:50%;transform:translateX(-50%);
   width:112px;height:26px;background:#000;border-radius:0 0 16px 16px;z-index:4;
 }
+
+/* Reflets du verre. Absolus, donc hors du flux flex de .screen, et
+   pointer-events:none pour ne jamais intercepter un clic. */
+.screen::before,.screen::after{
+  content:"";position:absolute;pointer-events:none;
+}
+/* Balayage unique à l'allumage. */
+.screen::before{
+  inset:-25% -60%;z-index:6;
+  background:linear-gradient(100deg,transparent 42%,rgba(255,255,255,.15) 50%,transparent 58%);
+  animation:screenSweep 1.6s .55s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes screenSweep{
+  from{translate:-75% 0;opacity:0}
+  30%{opacity:1}
+  to{translate:75% 0;opacity:0}
+}
+/* Reflet permanent qui glisse avec l'inclinaison — invisible au repos. */
+.screen::after{
+  inset:0;z-index:5;opacity:0;
+  background:linear-gradient(102deg,transparent 34%,rgba(255,255,255,.09) 47%,rgba(255,255,255,.02) 55%,transparent 68%);
+  translate:calc(var(--gx,0) * 1%) 0;
+  transition:translate .55s cubic-bezier(.22,1,.36,1),opacity .35s ease;
+}
+.device.is-tilting .screen::after{opacity:1;transition:translate .1s linear,opacity .35s ease}
 
 /* view stack */
 .views{position:relative;flex:1;overflow:hidden}
@@ -224,59 +281,321 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   color:var(--ink-soft);text-align:center;
 }
 
-/* ---------- spec sheet ---------- */
-.sheet{max-width:460px}
-.model{font-family:var(--mono);font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--signal)}
-.sheet h2{
-  font-family:var(--display);
-  font-size:clamp(38px,5.4vw,62px);line-height:.94;font-weight:800;letter-spacing:-.035em;
-  margin-top:13px;
+/* ---------- galerie de projets : l'image d'abord ---------- */
+.slide-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.slide{
+  position:relative;flex:1;overflow:hidden;padding:0;margin:0;
+  background:var(--screen-2);
+  animation:slideIn .42s cubic-bezier(.22,1,.36,1);
 }
-.role{font-size:clamp(15px,1.7vw,18px);color:var(--ink-soft);margin-top:15px;line-height:1.5;max-width:38ch}
-.role b{color:var(--ink);font-weight:600}
-
-.specs{margin-top:30px;border-top:1px solid var(--rule)}
-.spec{display:flex;align-items:baseline;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule)}
-.spec dt{
-  font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--ink-soft);flex:none;width:104px;
+@keyframes slideIn{
+  from{opacity:0;translate:0 18px}
+  to{opacity:1;translate:0 0}
 }
-.spec dd{font-size:13.5px;font-weight:500}
+.slide-shot{
+  width:100%;height:100%;display:block;
+  object-fit:cover;object-position:center;
+}
+.slide-empty{
+  position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--screen-dim);
+}
+/* Le nom se pose sur l'image, adossé à un dégradé pour rester lisible. */
+.slide-cap{
+  position:absolute;left:0;right:0;bottom:0;
+  padding:52px 18px 16px;
+  background:linear-gradient(180deg,transparent,rgba(15,18,22,.9) 62%);
+}
+.slide-name{
+  font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:-.025em;
+  line-height:1.06;color:var(--screen-txt);
+}
+.slide-stack{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--screen-dim);margin-top:6px;
+}
+.slide-nav{
+  flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:8px 16px 10px;
+  border-top:1px solid rgba(255,255,255,.09);
+}
+.slide-nav > button{
+  width:34px;height:34px;border-radius:50%;
+  display:grid;place-items:center;color:var(--screen-dim);
+  transition:background .16s,color .16s;
+}
+.slide-nav > button:hover:not(:disabled){background:var(--screen-3);color:var(--screen-txt)}
+.slide-nav > button:disabled{opacity:.28;cursor:default}
+.slide-dots{display:flex;align-items:center;gap:6px}
+.slide-dots button{
+  width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.26);
+  transition:background .3s ease,width .3s ease;
+}
+.slide-dots button.on{background:var(--signal);width:16px;border-radius:99px}
 
-.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
-.btn{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:13px 20px;border-radius:99px;font-size:13.5px;font-weight:600;
-  text-decoration:none;transition:transform .16s,box-shadow .16s;
+/* ---------- défilement à téléphone fixe ---------- */
+.reel{position:relative}
+/* Le bloc épinglé occupe toute la fenêtre ; les repères, en marge négative,
+   n'ajoutent pas de hauteur en double. */
+.reel-pin{
+  position:sticky;top:0;z-index:1;
+  height:100vh;height:100dvh;
+  overflow:hidden;
+  display:grid;place-items:center;
+}
+.reel-steps{position:relative;z-index:2;pointer-events:none;margin-top:-100vh;margin-top:-100dvh}
+.reel-step{height:100vh;height:100dvh}
+
+/* Fond plein qui change de couleur à chaque section. */
+.reel-bg{
+  position:absolute;inset:0;z-index:0;
+  background:var(--bg,#F2551E);
+  /* Halo resserré, plus un voile sombre côté texte : sans lui, le blanc sur
+     la zone la plus claire du halo devenait illisible. */
+  background-image:
+    linear-gradient(100deg,transparent 34%,rgba(21,17,13,.34) 100%),
+    radial-gradient(60% 46% at 42% 40%,var(--glow,#FFC08F) 0%,transparent 68%);
+  transition:background-color .9s ease,background-image .9s ease;
+}
+
+.reel-grid{
+  position:relative;z-index:1;
+  width:100%;max-width:1180px;
+  padding:0 clamp(16px,4vw,46px);
+  display:grid;
+  grid-template-columns:minmax(0,.88fr) minmax(0,1fr);
+  align-items:center;
+  gap:clamp(28px,7vw,112px);
+}
+
+/* La colonne épouse la largeur du téléphone : les pourcentages de position
+   des cartes se rapportent ainsi au téléphone, pas à toute la colonne. */
+.reel-phone{position:relative;display:flex;justify-content:center;width:max-content;margin-inline:auto}
+
+/* ---------- cartes flottantes ---------- */
+.floaters{position:absolute;inset:0;z-index:1;pointer-events:none}
+.floater{
+  position:absolute;
+  display:flex;flex-direction:column;gap:2px;
+  background:#fff;color:var(--ink);
+  border-radius:99px;padding:10px 18px;
+  box-shadow:0 14px 30px -12px rgba(21,17,13,.45);
+  white-space:nowrap;max-width:min(200px,24vw);
+  animation:floaterIn .55s cubic-bezier(.22,1,.36,1) both;
+}
+.floater b,.floater i{overflow:hidden;text-overflow:ellipsis}
+.floater b{font-size:13px;font-weight:600;letter-spacing:-.01em}
+.floater i{
+  font-style:normal;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);
+}
+@keyframes floaterIn{
+  from{opacity:0;translate:0 16px;scale:.94}
+  to{opacity:1;translate:0 0;scale:1}
+}
+/* Chaque carte respire à son rythme, sans jamais partir en même temps. */
+.floater{animation-name:floaterIn,floatDrift}
+.floater{animation-duration:.55s,6s}
+.floater{animation-timing-function:cubic-bezier(.22,1,.36,1),ease-in-out}
+.floater{animation-iteration-count:1,infinite}
+.floater{animation-fill-mode:both,none}
+@keyframes floatDrift{
+  0%,100%{translate:0 0}
+  50%{translate:0 -9px}
+}
+.fl-1{top:8%;left:-36%;animation-delay:.05s}
+.fl-2{top:42%;right:-40%;animation-delay:.14s,1.1s}
+.fl-3{bottom:16%;left:-32%;animation-delay:.23s,2.3s}
+/* Écrans plus étroits : moins de marge de chaque côté, les cartes se
+   rapprochent et visent le haut et le bas du téléphone, sans texte. */
+@media (max-width:1180px) and (min-width:901px){
+  .fl-1{top:2%;left:-20%}
+  .fl-2{top:46%;right:-30%}
+  .fl-3{bottom:4%;left:-18%}
+}
+
+/* Fenêtre courte : le téléphone se met à l'échelle pour rester entier. */
+@media (min-width:901px){
+  .reel-phone .device{
+    --dw:min(326px,calc(76vh * 326 / 668));
+    --dw:min(326px,calc(76dvh * 326 / 668));
+    width:var(--dw);height:auto;aspect-ratio:326 / 668;
+    padding:calc(var(--dw) * .0337);
+    border-radius:calc(var(--dw) * .1595);
+  }
+  .reel-phone .screen{border-radius:calc(var(--dw) * .1288)}
+  .reel-phone .notch{width:calc(var(--dw) * .3436);height:calc(var(--dw) * .0798)}
+  .reel-phone .device::after{top:calc(var(--dw) * .5706);height:calc(var(--dw) * .227)}
+}
+
+/* ---------- photos façon polaroïd ---------- */
+.polas{position:absolute;inset:0;z-index:1;pointer-events:none}
+.pola{
+  position:absolute;
+  width:clamp(104px,10vw,138px);
+  background:#fff;padding:9px 9px 0;
+  border-radius:4px;
+  box-shadow:0 18px 34px -14px rgba(21,17,13,.55);
+  animation:floaterIn .55s cubic-bezier(.22,1,.36,1) both,floatDrift 6s ease-in-out infinite;
+}
+.pola img,.pola-empty{
+  display:block;width:100%;aspect-ratio:4 / 5;
+  object-fit:cover;border-radius:2px;background:var(--bone-deep);
+}
+.pola-empty{
+  display:grid;place-items:center;text-align:center;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-soft);padding:0 6px;
+}
+.pola figcaption{
+  font-family:var(--mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink);text-align:center;padding:8px 2px 9px;
+}
+/* Chaque cliché légèrement de travers, comme posé à la main. */
+.pola.fl-1{rotate:-5deg}
+.pola.fl-2{rotate:4deg}
+.pola.fl-3{rotate:-3deg}
+
+/* ---------- texte de section ---------- */
+.reel-copy{position:relative;z-index:3;color:#fff;animation:copyIn .6s cubic-bezier(.22,1,.36,1) both}
+@keyframes copyIn{
+  from{opacity:0;translate:0 20px}
+  to{opacity:1;translate:0 0}
+}
+.reel-eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.72);
+}
+/* Badge de disponibilité : carré arrondi, fond blanc pour ressortir sur
+   toutes les couleurs de fond, pastille verte qui respire. */
+.reel-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:#fff;color:var(--ink);
+  border-radius:10px;padding:11px 17px;
+  font-family:var(--mono);font-size:12.5px;font-weight:500;
+  letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;
+  box-shadow:0 12px 26px -12px rgba(21,17,13,.55);
+}
+.reel-badge-dot{
+  width:9px;height:9px;border-radius:50%;flex:none;
+  background:#12B76A;box-shadow:0 0 0 4px rgba(18,183,106,.2);
+  animation:badgePulse 2.4s ease-in-out infinite;
+}
+@keyframes badgePulse{
+  0%,100%{box-shadow:0 0 0 4px rgba(18,183,106,.2)}
+  50%{box-shadow:0 0 0 7px rgba(18,183,106,.08)}
+}
+
+.reel-title{
+  font-family:var(--display);font-weight:800;letter-spacing:-.035em;line-height:1.02;
+  font-size:clamp(30px,4.6vw,62px);
+  margin-top:14px;max-width:15ch;
+  text-shadow:0 2px 18px rgba(21,17,13,.22);
+}
+/* Portrait de la section « À propos ». */
+.reel-photo{
+  width:clamp(96px,11vw,140px);aspect-ratio:1;
+  object-fit:cover;object-position:center 22%;
+  border-radius:50%;display:block;margin-bottom:20px;
+  border:3px solid rgba(255,255,255,.9);
+  box-shadow:0 16px 34px -16px rgba(0,0,0,.7);
+}
+.reel-text{
+  font-size:clamp(14.5px,1.4vw,18px);line-height:1.68;
+  color:#fff;margin-top:16px;max-width:50ch;
+  text-shadow:0 1px 14px rgba(21,17,13,.45);
+}
+/* Expressions clés : pastille sombre et texte clair — lisible sur n'importe
+   quelle couleur de section, contrairement à une simple teinte. */
+.hl{
+  background:rgba(21,17,13,.82);
+  color:#FFD166;font-weight:600;
+  padding:2px 9px;border-radius:7px;
+  box-decoration-break:clone;-webkit-box-decoration-break:clone;
+  text-shadow:none;
+}
+/* Quand la section porte un texte, le titre se resserre pour que le bloc
+   entier tienne dans la fenêtre sans jamais déborder. */
+.reel-copy.has-text .reel-title{
+  font-size:clamp(26px,3.5vw,46px);
+  max-width:17ch;margin-top:12px;
+}
+.reel-copy.has-text .reel-cta{margin-top:22px}
+.reel-copy.has-text .reel-progress{margin-top:22px}
+.reel-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.pill{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:14px 22px;border-radius:99px;
+  background:var(--ink);color:#fff;
+  font-size:14px;font-weight:600;text-decoration:none;
+  box-shadow:0 12px 24px -12px rgba(21,17,13,.7);
+  transition:transform .16s ease;
 }
 .ico-btn{width:15px;height:15px}
-.btn-primary{background:var(--ink);color:var(--bone);box-shadow:0 8px 18px -8px rgba(21,17,13,.6)}
-.btn-ghost{border:1px solid var(--rule);color:var(--ink)}
-.btn:hover{transform:translateY(-2px)}
-.btn-ghost:hover{border-color:var(--ink)}
-
-/* ---------- footer ---------- */
-.site-foot{
-  display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
-  padding:16px clamp(16px,4vw,46px);
-  border-top:1px solid var(--rule);
-  font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-soft);
+.pill-ghost{background:#fff;color:var(--ink)}
+.pill:hover{transform:translateY(-2px)}
+.reel-progress{
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  color:#fff;margin-top:34px;
 }
-.site-foot a{text-decoration:none}
-.site-foot a:hover{color:var(--signal)}
+.reel-progress i{font-style:normal;color:rgba(255,255,255,.5)}
+
+@media (max-width:900px){
+  /* Une colonne : le texte passe au-dessus du téléphone. */
+  .reel-grid{grid-template-columns:1fr;gap:18px;justify-items:center;text-align:center}
+  .reel-copy{order:-1}
+  .reel-title{max-width:18ch;margin-top:9px;font-size:clamp(22px,5.6vw,34px)}
+  .reel-eyebrow{font-size:10px}
+  .reel-badge{font-size:10.5px;padding:9px 13px;gap:8px;letter-spacing:.05em}
+  .reel-badge-dot{width:8px;height:8px}
+  .reel-cta{justify-content:center;margin-top:18px}
+  .reel-photo{margin:0 auto 12px;width:clamp(72px,20vw,104px)}
+  .reel-text{font-size:13px;line-height:1.55;margin-top:10px;max-width:34ch}
+  .reel-copy.has-text .reel-title{font-size:clamp(20px,5vw,30px);max-width:20ch;margin-top:8px}
+  .reel-copy.has-text .reel-cta{margin-top:14px}
+  .reel-progress{display:none}
+  .reel-phone .device{
+    --dw:min(326px,84vw,calc(70vh * 326 / 668));
+    --dw:min(326px,84vw,calc(70dvh * 326 / 668));
+  }
+  /* La section d'accroche porte le texte le plus long : on lui laisse moins
+     de place au téléphone pour que les deux tiennent ensemble. */
+  .reel-grid:has(.has-text) .reel-phone .device{
+    --dw:min(326px,84vw,calc(56vh * 326 / 668));
+    --dw:min(326px,84vw,calc(56dvh * 326 / 668));
+  }
+  /* « À propos » cumule portrait, titre et texte : c'est la colonne la plus
+     haute, le téléphone doit donc y céder le plus de place. */
+  .reel-grid:has(.has-photo) .reel-phone .device{
+    --dw:min(326px,84vw,calc(41vh * 326 / 668));
+    --dw:min(326px,84vw,calc(41dvh * 326 / 668));
+  }
+  .reel-copy.has-photo .reel-photo{width:clamp(64px,16vw,88px);margin-bottom:8px}
+  .reel-copy.has-photo .reel-text{font-size:12.5px;line-height:1.5}
+  /* Les cartes se rapprochent pour ne pas sortir de l'écran. */
+  .fl-1{top:5%;left:-4%}
+  .fl-2{top:24%;right:-6%}
+  .fl-3{display:none}
+  .pola{width:clamp(74px,21vw,96px);padding:6px 6px 0}
+  .pola figcaption{font-size:8px;padding:5px 2px 6px}
+  .floater{padding:8px 14px}
+  .floater b{font-size:11.5px}
+  .floater i{font-size:8.5px}
+}
+@media (max-width:560px){
+  .reel-cta .pill{padding:12px 18px;font-size:13px}
+  .fl-1{left:0}
+  .fl-2{right:0}
+}
 
 /* ---------- responsive ---------- */
 @media (max-width:900px){
   .stage{grid-template-columns:1fr;gap:34px;padding-top:30px}
-  .sheet{max-width:none;order:-1}
-  .sheet h2{font-size:clamp(34px,10vw,48px)}
-  .device-col{order:1}
 }
 @media (max-width:560px){
-  .site-head,.caption{display:none}
+  .caption{display:none}
   .stage{padding:26px 16px 30px;gap:30px}
-  .sheet{max-width:none;order:1}
-  .device-col{order:0}
   /* téléphone réduit : largeur pilotée par --dw, coque et écran mis à l'échelle */
   .device{
     --dw:min(326px,84vw,calc(82vh * 326 / 668));
@@ -297,7 +616,10 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   }
   .screen{border-radius:calc(var(--dw) * .1288)}
   .notch{width:calc(var(--dw) * .3436);height:calc(var(--dw) * .0798)}
-  .site-foot{margin-top:8px}
+  /* Sur mobile : lévitation plus discrète, pas d'ombre au sol (la fiche
+     technique suit de près) et pas d'inclinaison — le JS ne s'active pas. */
+  .device-wrap::after{display:none}
+  .device{animation-name:deviceFloatSmall}
 }
 /* écrans très étroits : le téléphone rétrécit, le contenu se compacte avec lui */
 @media (max-width:379px){
