@@ -8,7 +8,7 @@ export const identity = {
   middleName: "Amoin",
   lastName: "Rosine",
   shortName: "Rosine Koffi",
-  role: "Développeuse mobile Flutter",
+  role: "Designer Développeuse",
   city: "Abidjan",
   country: "Côte d'Ivoire",
   tagline: "Je conçois des applications que l'on garde sur son écran d'accueil.",
@@ -26,7 +26,7 @@ export const identity = {
 
 /** Accroche de la première section. */
 export const hero = {
-  title: "Développeuse Mobile & Formatrice",
+  title: "Designer Développeuse",
   pitch:
     "J'aide les entreprises à transformer leurs idées en applications mobiles robustes grâce à des architectures modernes et à l'intelligence artificielle. Mon objectif : créer des produits performants, évolutifs et centrés sur l'utilisateur pour accélérer leur croissance.",
   /** Ces expressions sont mises en couleur dans l'accroche. */
