@@ -1,18 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Manrope, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Inter, JetBrains_Mono } from "next/font/google";
+import ThemeScript from "@/components/ThemeScript";
 import { identity } from "@/data/portfolio";
 import "./globals.css";
 
-const display = Instrument_Serif({
+const display = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: "400",
   style: ["normal", "italic"],
   variable: "--font-display",
   display: "swap",
 });
-const body = Manrope({
+const body = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
   variable: "--font-body",
   display: "swap",
 });
@@ -33,7 +33,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F6F1E9",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f8f9f8" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e1415" },
+  ],
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -41,8 +44,15 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${display.variable} ${body.variable} ${mono.variable}`}>
-      <body>{children}</body>
+    <html
+      lang="fr"
+      className={`${display.variable} ${body.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
+      <body>
+        <ThemeScript />
+        {children}
+      </body>
     </html>
   );
 }

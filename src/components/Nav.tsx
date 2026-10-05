@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { identity } from "@/data/portfolio";
-import { DownloadIcon } from "./Icons";
+import { DownloadIcon, MoonIcon, SunIcon } from "./Icons";
 
 const NAV_LINKS = [
   { id: "a-propos", label: "À propos" },
   { id: "competences", label: "Compétences" },
   { id: "projets", label: "Projets" },
   { id: "parcours", label: "Parcours" },
+  { id: "faq", label: "FAQ" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -16,6 +17,23 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("");
+  /* Inconnu au rendu serveur : le thème est lu sur <html> une fois monté. */
+  const [theme, setTheme] = useState<"light" | "dark" | null>(null);
+
+  useEffect(() => {
+    setTheme(document.documentElement.dataset.theme === "dark" ? "dark" : "light");
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem("theme", next);
+    } catch {
+      /* stockage indisponible : le choix vaut pour cette visite */
+    }
+    setTheme(next);
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -74,6 +92,15 @@ export default function Nav() {
             </a>
           ))}
         </nav>
+
+        <button
+          type="button"
+          className="nav-theme"
+          onClick={toggleTheme}
+          aria-label={theme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
+        >
+          {theme === "dark" ? <SunIcon className="ico" /> : <MoonIcon className="ico" />}
+        </button>
 
         <a className="btn btn-small nav-cv" href={identity.cvFile} download>
           <DownloadIcon className="ico" />

@@ -291,5 +291,39 @@ export const education: TimelineItem[] = [
   { when: "2023 — 2024", title: "Certificat en développement web et mobile", who: "Simplon Côte d'Ivoire" },
 ];
 
+/** Section « Questions fréquentes ». Une ligne par question. */
+export const faq: { question: string; answer: string }[] = [
+  {
+    question: "Quels types de projets réalisez-vous ?",
+    answer:
+      "Des sites vitrines et institutionnels, des applications web et mobiles sur-mesure, des interfaces UI/UX de la maquette à l'intégration, et des agents IA. Je réalise aussi des supports visuels : identités, affiches et étiquettes.",
+  },
+  {
+    question: "Avez-vous déjà travaillé sur des produits en production ?",
+    answer:
+      "Oui. J'ai développé l'application mobile Flot pour les chauffeurs VTC d'Abidjan, travaillé sur Hygie chez CapCoding-Studio, et créé les sites Dughu et Deeltoo.",
+  },
+  {
+    question: "Développez-vous des agents IA ?",
+    answer:
+      "Oui. Je conçois des agents IA et des automatisations adaptés à un besoin précis, intégrés à votre site ou à votre application.",
+  },
+  {
+    question: "Quelles technologies utilisez-vous ?",
+    answer:
+      "Flutter et Dart pour le mobile, React, Next.js et TypeScript pour le web, Laravel côté serveur, avec PostgreSQL ou MySQL pour les données. Je conçois les maquettes sur Figma.",
+  },
+  {
+    question: "Travaillez-vous avec des clients hors de Côte d'Ivoire ?",
+    answer:
+      "Oui. Je suis basée à Abidjan et je travaille à distance sur des projets locaux comme internationaux.",
+  },
+  {
+    question: "Comment démarrer un projet avec vous ?",
+    answer:
+      "Écrivez-moi par e-mail en décrivant votre idée. Nous en discutons, je vous propose un cadrage (périmètre, délais, budget), puis je démarre la conception.",
+  },
+];
+
 /** Liste à plat des projets, dans l'ordre d'affichage du diaporama. */
 export const allProjects: Project[] = projectGroups.flatMap((g) => g.items);

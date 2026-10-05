@@ -1,29 +1,52 @@
 /* ───────────────────────────────────────────────────────────
    Portfolio — feuille de style
-   Palette ivoire et terracotta, titres en serif, texte en sans.
+   Palette blanc cassé et bleu canard (#36626b), en version claire et sombre.
+   Titres en Plus Jakarta Sans, texte en Inter.
    ─────────────────────────────────────────────────────────── */
 
+/* Thème clair. `--accent` sert au texte et aux filets, `--accent-fill`
+   aux aplats (boutons, pastilles) : la teinte reste la même dans les deux
+   thèmes, seul le ton du texte s'éclaircit sur fond sombre. */
 :root {
-  --bg: #f6f1e9;
-  --tint: #efe8dc;
-  --surface: #fbf8f3;
-  --ink: #1a1613;
-  --muted: #6d645b;
-  --line: rgba(26, 22, 19, 0.12);
-  --accent: #b4492d;
-  --accent-soft: #f1ddd2;
-  --night: #16120f;
-  --night-ink: #f3ece2;
-  --night-muted: #a39a8f;
-  --night-line: rgba(243, 236, 226, 0.14);
+  color-scheme: light;
+  --bg: #f8f9f8;
+  --tint: #edf1f1;
+  --surface: #ffffff;
+  --ink: #121a1c;
+  --muted: #566365;
+  --line: rgba(18, 26, 28, 0.14);
+  --accent: #36626b;
+  --accent-fill: #36626b;
+  --accent-soft: #d6e4e6;
+  --shadow: rgba(18, 26, 28, 0.35);
+  --night: #0f2226;
+  --night-ink: #edf3f3;
+  --night-muted: #a6b6b8;
+  --night-line: rgba(237, 243, 243, 0.16);
+  --night-accent: #8fc3cc;
 
-  --serif: var(--font-display), "Times New Roman", serif;
+  --display: var(--font-display), system-ui, sans-serif;
   --sans: var(--font-body), system-ui, sans-serif;
   --mono: var(--font-mono), ui-monospace, monospace;
 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --gutter: clamp(20px, 5vw, 64px);
   --nav-h: 72px;
+}
+
+/* Thème sombre : posé sur <html> par le script de layout.tsx. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0e1415;
+  --tint: #131b1c;
+  --surface: #192224;
+  --ink: #eaf0f0;
+  --muted: #a0aeb0;
+  --line: rgba(234, 240, 240, 0.15);
+  --accent: #8fc3cc;
+  --accent-soft: #1c353a;
+  --shadow: rgba(0, 0, 0, 0.6);
+  --night: #132b30;
 }
 
 *,
@@ -48,6 +71,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 body.menu-open {
@@ -82,7 +106,7 @@ img {
 }
 
 ::selection {
-  background: var(--accent);
+  background: var(--accent-fill);
   color: #fff;
 }
 
@@ -158,13 +182,13 @@ img {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: var(--accent);
+  background: var(--accent-fill);
   transform: translateY(101%);
   transition: transform 0.5s var(--ease);
 }
 
 .btn:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-fill);
   color: #fff;
   transform: translateY(-2px);
 }
@@ -208,7 +232,7 @@ img {
 
 .chips li.is-hot {
   border-color: transparent;
-  background: var(--accent);
+  background: var(--accent-fill);
   color: #fff;
 }
 
@@ -253,7 +277,7 @@ mark.hl {
   z-index: 2;
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 20px;
   height: var(--nav-h);
   width: min(100%, 1240px);
   margin-inline: auto;
@@ -262,10 +286,11 @@ mark.hl {
 
 .nav-brand {
   margin-right: auto;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.5rem;
   line-height: 1;
   letter-spacing: -0.01em;
+  font-weight: 700;
 }
 
 .nav-brand i {
@@ -307,6 +332,28 @@ mark.hl {
 .nav-links a.is-active::after {
   transform: scaleX(1);
   transform-origin: left;
+}
+
+.nav-theme {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: none;
+  color: var(--ink);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: border-color 0.3s, background-color 0.3s, color 0.3s, rotate 0.6s var(--ease);
+}
+
+.nav-theme:hover {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+  rotate: 40deg;
 }
 
 .nav-burger {
@@ -381,12 +428,14 @@ mark.hl {
   gap: 18px;
   padding-block: 14px;
   border-bottom: 1px solid var(--line);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(2rem, 9vw, 2.8rem);
   line-height: 1.1;
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 0.4s, transform 0.4s;
+  font-weight: 600;
+  letter-spacing: -0.03em;
 }
 
 .menu nav small {
@@ -481,11 +530,11 @@ mark.hl {
 
 .hero-title {
   margin-top: 28px;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(3.3rem, 8.6vw, 7.6rem);
-  line-height: 0.96;
-  letter-spacing: -0.025em;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(2.5rem, 6.2vw, 5.1rem);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
 }
 
 .hero-name {
@@ -668,10 +717,12 @@ mark.hl {
 .marquee li {
   display: flex;
   align-items: center;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(1.4rem, 2.6vw, 2rem);
   line-height: 1;
   white-space: nowrap;
+  font-weight: 500;
+  letter-spacing: -0.02em;
 }
 
 .marquee li:nth-child(even) {
@@ -704,11 +755,11 @@ mark.hl {
 .head-title {
   max-width: 17ch;
   margin-top: 22px;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(2.3rem, 5.2vw, 4.2rem);
-  line-height: 1.04;
-  letter-spacing: -0.02em;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.9rem, 4vw, 3.1rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
   text-wrap: balance;
 }
 
@@ -728,10 +779,12 @@ mark.hl {
 }
 
 .lead {
-  font-family: var(--serif);
-  font-size: clamp(1.35rem, 2.1vw, 1.75rem);
-  line-height: 1.38;
+  font-family: var(--display);
+  font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+  line-height: 1.5;
   letter-spacing: -0.005em;
+  font-weight: 500;
+  letter-spacing: -0.015em;
 }
 
 .methods {
@@ -819,7 +872,7 @@ mark.hl {
   .skill:hover,
   .project:hover {
     border-color: color-mix(in srgb, var(--accent) 35%, transparent);
-    box-shadow: 0 24px 48px -28px rgba(26, 22, 19, 0.35);
+    box-shadow: 0 24px 48px -28px var(--shadow);
     transform: translateY(-4px);
   }
 
@@ -842,10 +895,11 @@ mark.hl {
 
 .skill h3 {
   margin: 10px 0 22px;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(1.7rem, 2.6vw, 2.2rem);
-  line-height: 1.1;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 2.2vw, 1.85rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 /* Projets */
@@ -891,7 +945,7 @@ mark.hl {
   width: 46%;
   height: auto;
   border-radius: 18px;
-  box-shadow: 0 30px 60px -24px rgba(26, 22, 19, 0.45);
+  box-shadow: 0 30px 60px -24px var(--shadow);
   translate: -50% 0;
   transition: translate 1.2s var(--ease);
 }
@@ -932,13 +986,14 @@ mark.hl {
   left: clamp(20px, 3vw, 32px);
   right: 20px;
   bottom: clamp(16px, 2.4vw, 26px);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-style: italic;
   font-size: clamp(2.2rem, 4.6vw, 3.6rem);
   line-height: 0.98;
   letter-spacing: -0.02em;
   color: color-mix(in srgb, var(--ink) 82%, transparent);
   transition: transform 1.2s var(--ease);
+  font-weight: 600;
 }
 
 .project-num {
@@ -982,10 +1037,11 @@ mark.hl {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  font-family: var(--serif);
-  font-weight: 400;
+  font-family: var(--display);
+  font-weight: 600;
   font-size: clamp(1.6rem, 2.4vw, 2rem);
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .project-text {
@@ -1064,10 +1120,11 @@ mark.hl {
 }
 
 .tl-item h4 {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(1.3rem, 1.9vw, 1.6rem);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.15rem, 1.6vw, 1.35rem);
   line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .tl-who {
@@ -1118,10 +1175,11 @@ mark.hl {
 }
 
 .beyond-item h3 {
-  font-family: var(--serif);
-  font-weight: 400;
+  font-family: var(--display);
+  font-weight: 600;
   font-size: clamp(1.7rem, 2.6vw, 2.2rem);
   line-height: 1.12;
+  letter-spacing: -0.02em;
 }
 
 .beyond-item p {
@@ -1174,10 +1232,11 @@ mark.hl {
 .tile figcaption {
   position: absolute;
   inset: auto 14px 12px 14px;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-style: italic;
   font-size: clamp(1rem, 1.6vw, 1.3rem);
   line-height: 1.1;
+  font-weight: 600;
 }
 
 .tile:has(img) figcaption {
@@ -1245,7 +1304,7 @@ mark.hl {
 
 @media (hover: hover) {
   .reel li:hover img {
-    box-shadow: 0 24px 48px -28px rgba(26, 22, 19, 0.45);
+    box-shadow: 0 24px 48px -28px var(--shadow);
     transform: translateY(-6px);
   }
 }
@@ -1378,6 +1437,132 @@ mark.hl {
   }
 }
 
+/* Questions fréquentes */
+
+.head-sub {
+  max-width: 24rem;
+  margin-top: 20px;
+  color: var(--muted);
+}
+
+.head-sub a {
+  color: var(--ink);
+  font-weight: 600;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 1px;
+  transition: color 0.3s;
+}
+
+.head-sub a:hover {
+  color: var(--accent);
+}
+
+.faq {
+  border-top: 1px solid var(--ink);
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--line);
+}
+
+.faq-item summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 20px;
+  padding-block: 24px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-num {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.faq-q {
+  font-family: var(--display);
+  font-size: clamp(1.15rem, 1.7vw, 1.4rem);
+  line-height: 1.25;
+  transition: color 0.3s;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.faq-item summary:hover .faq-q {
+  color: var(--accent);
+}
+
+/* Le « + » devient « − » à l'ouverture. */
+.faq-plus {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  transition: background-color 0.4s, border-color 0.4s, rotate 0.5s var(--ease);
+}
+
+.faq-plus::before,
+.faq-plus::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 1.5px;
+  background: var(--ink);
+  translate: -50% -50%;
+  transition: background-color 0.4s, rotate 0.5s var(--ease);
+}
+
+.faq-plus::after {
+  rotate: 90deg;
+}
+
+.faq-item[open] .faq-plus {
+  border-color: var(--accent-fill);
+  background: var(--accent-fill);
+  rotate: 180deg;
+}
+
+.faq-item[open] .faq-plus::before,
+.faq-item[open] .faq-plus::after {
+  background: #fff;
+}
+
+.faq-item[open] .faq-plus::after {
+  rotate: 0deg;
+}
+
+.faq-a {
+  max-width: 38rem;
+  padding: 0 54px 28px 44px;
+  color: var(--muted);
+}
+
+.faq-item[open] .faq-a {
+  animation: fade-up 0.6s var(--ease);
+}
+
+@media (max-width: 680px) {
+  .faq-item summary {
+    gap: 14px;
+  }
+
+  .faq-a {
+    padding-inline: 0;
+  }
+}
+
 /* ── Contact ──────────────────────────────────────────────── */
 
 .contact {
@@ -1392,17 +1577,17 @@ mark.hl {
 
 .contact .eyebrow span,
 .contact-title em {
-  color: #e58a6b;
+  color: var(--night-accent);
 }
 
 .contact-title {
   max-width: 14ch;
   margin-top: 24px;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(2.8rem, 8vw, 6.6rem);
-  line-height: 0.98;
-  letter-spacing: -0.025em;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(2.2rem, 5.8vw, 4.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
   text-wrap: balance;
 }
 
@@ -1412,9 +1597,11 @@ mark.hl {
   gap: 14px;
   max-width: 100%;
   margin-top: clamp(36px, 5vw, 64px);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(1.35rem, 3.6vw, 2.6rem);
   line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: -0.02em;
 }
 
 .contact-mail span {
@@ -1432,7 +1619,7 @@ mark.hl {
 
 .contact-mail:hover span,
 .contact-mail:hover .ico {
-  color: #e58a6b;
+  color: var(--night-accent);
 }
 
 .contact-mail:hover .ico {

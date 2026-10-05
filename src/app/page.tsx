@@ -20,6 +20,7 @@ import {
   communities,
   creative,
   realisations,
+  faq,
   projectGroups,
   skillGroups,
   qualities,
@@ -369,11 +370,51 @@ export default function Home() {
           <Reel works={realisations} />
         </section>
 
+        {/* ── Questions fréquentes ────────────────────────────── */}
+        <section className="section section-tint" id="faq">
+          <div className="wrap split">
+            <header className="head">
+              <p className="eyebrow" data-reveal>
+                <span>06</span>
+                FAQ
+              </p>
+              <h2 className="head-title" data-reveal style={delay(1)}>
+                Questions fréquentes.
+              </h2>
+              <p className="head-sub" data-reveal style={delay(2)}>
+                Une question qui n&apos;est pas ici ?{" "}
+                <a href={`mailto:${contact.email}`}>Écrivez-moi directement.</a>
+              </p>
+            </header>
+
+            {/* `name` commun : ouvrir une question referme la précédente. */}
+            <div className="faq">
+              {faq.map((item, i) => (
+                <details
+                  className="faq-item"
+                  name="faq"
+                  key={item.question}
+                  open={i === 0}
+                  data-reveal
+                  style={delay(i, 60)}
+                >
+                  <summary>
+                    <span className="faq-num">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="faq-q">{item.question}</span>
+                    <i className="faq-plus" aria-hidden="true" />
+                  </summary>
+                  <p className="faq-a">{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── Contact ─────────────────────────────────────────── */}
         <section className="contact" id="contact">
           <div className="wrap">
             <p className="eyebrow" data-reveal>
-              <span>06</span>
+              <span>07</span>
               Contact
             </p>
             <h2 className="contact-title" data-reveal style={delay(1)}>
