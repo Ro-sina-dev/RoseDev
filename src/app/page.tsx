@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Nav from "@/components/Nav";
 import Motion from "@/components/Motion";
+import Reel from "@/components/Reel";
 import {
   ArrowDown,
   ArrowUpRight,
@@ -18,8 +19,10 @@ import {
   contact,
   communities,
   creative,
+  realisations,
   projectGroups,
   skillGroups,
+  qualities,
   experience,
   education,
   type Photo,
@@ -72,6 +75,14 @@ function Timeline({ items }: { items: TimelineItem[] }) {
           <div>
             <h4>{item.title}</h4>
             <p className="tl-who">{item.who}</p>
+            {item.about && <p className="tl-about">{item.about}</p>}
+            {item.points && (
+              <ul className="tl-points">
+                {item.points.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </li>
       ))}
@@ -136,6 +147,12 @@ export default function Home() {
                   </span>
                 ))}
               </h1>
+
+              <p className="hero-fields enter" style={delay(3)}>
+                {hero.fields.map((field) => (
+                  <span key={field}>{field}</span>
+                ))}
+              </p>
 
               <p className="hero-pitch enter" style={delay(4)}>
                 {colorise(hero.pitch, hero.highlight)}
@@ -219,11 +236,11 @@ export default function Home() {
             <SectionHead
               index="02"
               label="Compétences"
-              title="Flutter, Clean Architecture et des API qui répondent"
+              title="De la maquette au code, sur mobile et sur le web"
             />
 
             <div className="skills">
-              {skillGroups.map((group, i) => (
+              {[...skillGroups, { title: "Qualités", items: qualities, hot: undefined }].map((group, i) => (
                 <article className="skill" key={group.title} data-reveal data-spot style={delay(i)}>
                   <p className="skill-index">{String(i + 1).padStart(2, "0")}</p>
                   <h3>{group.title}</h3>
@@ -254,7 +271,7 @@ export default function Home() {
                 const Tag = project.href ? "a" : "article";
                 return (
                   <Tag
-                    className="project"
+                    className={["project", project.kind === "web" ? "is-wide" : ""].join(" ").trim()}
                     key={project.name}
                     data-reveal
                     data-spot
@@ -263,7 +280,7 @@ export default function Home() {
                       ? { href: project.href, target: "_blank", rel: "noopener noreferrer" }
                       : {})}
                   >
-                    <div className="project-cover">
+                    <div className={project.kind === "mobile" ? "project-cover is-screen" : "project-cover"}>
                       {project.image ? (
                         /* eslint-disable-next-line @next/next/no-img-element */
                         <img src={project.image} alt="" loading="lazy" />
@@ -303,7 +320,7 @@ export default function Home() {
             <SectionHead
               index="04"
               label="Parcours"
-              title="Du stage au poste de développeuse mobile"
+              title="Du web au mobile, puis en freelance"
             />
 
             <div className="journey">
@@ -329,17 +346,27 @@ export default function Home() {
             <SectionHead index="05" label="Au-delà du code" title="Communautés et création visuelle" />
 
             <div className="beyond">
-              {[communities, creative].map((block) => (
-                <article className="beyond-item" key={block.title}>
-                  <h3 data-reveal>{block.title}</h3>
-                  <p data-reveal style={delay(1)}>
-                    {colorise(block.text, block.highlight)}
-                  </p>
-                  <Gallery photos={block.photos} />
-                </article>
-              ))}
+              <article className="beyond-item">
+                <h3 data-reveal>{communities.title}</h3>
+                <p data-reveal style={delay(1)}>
+                  {colorise(communities.text, communities.highlight)}
+                </p>
+                <Gallery photos={communities.photos} />
+              </article>
+              <article className="beyond-item">
+                <h3 data-reveal>{creative.title}</h3>
+                <p data-reveal style={delay(1)}>
+                  {colorise(creative.text, creative.highlight)}
+                </p>
+                <p className="beyond-hint" data-reveal style={delay(2)}>
+                  Mes réalisations défilent ci-dessous
+                  <ArrowDown className="ico" />
+                </p>
+              </article>
             </div>
           </div>
+
+          <Reel works={realisations} />
         </section>
 
         {/* ── Contact ─────────────────────────────────────────── */}

@@ -24,7 +24,7 @@ const mono = JetBrains_Mono({
 });
 
 const title = `${identity.firstName} ${identity.middleName} ${identity.lastName} — ${identity.role}`;
-const description = `Portfolio de ${identity.shortName}, ${identity.role.toLowerCase()} basée à ${identity.city}. Applications Flutter, architecture MVVM et Clean Architecture, intégration d'API REST.`;
+const description = `Portfolio de ${identity.shortName}, ${identity.role.toLowerCase()} basée à ${identity.city}. UI/UX design, développement mobile et développement web.`;
 
 export const metadata: Metadata = {
   title,

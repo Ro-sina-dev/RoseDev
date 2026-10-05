@@ -39,24 +39,29 @@ export default function Motion() {
     ];
 
     if (!reduced) {
-      /* Apparition au défilement. Ce qui est déjà à l'écran reste affiché :
-         on ne masque que ce qui se trouve plus bas. */
+      /* Ce qui est déjà à l'écran au chargement reste affiché : on ne masque
+         que ce qui se trouve plus bas. */
       const targets = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
       for (const el of targets) {
         if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add("in");
       }
       root.dataset.motion = "on";
 
+      /* Entrée quand l'élément arrive à l'écran, sortie quand il le quitte :
+         vers le haut s'il est passé au-dessus, vers le bas sinon. */
       const observer = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("in");
-              observer.unobserve(entry.target);
+            const el = entry.target as HTMLElement;
+            if (entry.intersectionRatio >= 0.08) {
+              el.classList.add("in");
+            } else if (!entry.isIntersecting) {
+              el.classList.remove("in");
+              el.dataset.exit = entry.boundingClientRect.top < 0 ? "up" : "down";
             }
           }
         },
-        { rootMargin: "0px 0px -12% 0px", threshold: 0.08 }
+        { rootMargin: "0px 0px -8% 0px", threshold: [0, 0.08] }
       );
       targets.forEach((el) => observer.observe(el));
 

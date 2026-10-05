@@ -11,26 +11,28 @@ export const identity = {
   role: "Designer Développeuse",
   city: "Abidjan",
   country: "Côte d'Ivoire",
-  tagline: "Je conçois des applications que l'on garde sur son écran d'accueil.",
+  tagline: "Je vous aide à développer votre idée.",
   homeIntro:
     "Designer Développeuse. Ce portfolio est une application — touchez une icône pour l'explorer.",
   availability: {
     title: "Disponible pour un poste",
     detail: "Abidjan · CDI ou freelance",
   },
-  cvFile: "/CV_Rosine_Koffi_Developpeuse_Mobile.pdf",
+  cvFile: "/CV%20Rosine.Koffi.developer.pdf",
   photo: "/rosine-koffi.jpg",
   /** Badge affiché en haut de la première section. */
-  badge: "Disponible · Software Engineer",
+  badge: "Disponible pour vous",
 };
 
 /** Accroche de la première section. */
 export const hero = {
   title: "Designer Développeuse",
+  /** Ligne de spécialités affichée sous le titre. */
+  fields: ["UI/UX Design", "Développement Mobile", "Développement Web", "Agents IA"],
   pitch:
-    "J'aide les entreprises à transformer leurs idées en applications mobiles robustes grâce à des architectures modernes et à l'intelligence artificielle. Mon objectif : créer des produits performants, évolutifs et centrés sur l'utilisateur pour accélérer leur croissance.",
+    "Je conçois, développe et livre des produits web et mobiles robustes, du cahier des charges jusqu'à la mise en production.",
   /** Ces expressions sont mises en couleur dans l'accroche. */
-  highlight: ["applications mobiles robustes", "intelligence artificielle"],
+  highlight: ["produits web et mobiles robustes"],
 };
 
 /**
@@ -42,12 +44,13 @@ export type Photo = { src?: string; label: string };
 /** Section « Communautés ». */
 export const communities = {
   title: "GOS Creative & Vision Tech",
-  text: "Je fais grandir des communautés tech à Abidjan. Chez GOS Creative, je suis responsable de l'extension de la communauté dans les autres villes du pays. Chez Vision Tech, je suis responsable événementiel : organisation, logistique et animation des rencontres.",
-  highlight: ["GOS Creative", "Vision Tech"],
+  text:
+    "Je fais partie de communautés tech à Abidjan, dont GOS Creative et Vision Tech. J'ai aussi un compte TikTok où je partage mon expérience.",
+  highlight: ["GOS Creative", "Vision Tech", "TikTok"],
   photos: [
-    { label: "GOS Creative", src: "" },
-    { label: "Vision Tech", src: "" },
-    { label: "Rencontres", src: "" },
+    { label: "GOS Creative", src: "/gocreatve.jpeg" },
+    { label: "Rencontres", src: "/gocreatve1.jpeg" },
+    { label: "Événements", src: "/gocreatvee.jpeg" },
   ] as Photo[],
 };
 
@@ -56,17 +59,28 @@ export const creative = {
   title: "Graphiste, vidéaste, photographe",
   text: "En dehors du code, je conçois des visuels, je filme et je photographie. Affiches, identités, montages et captations d'événements : je livre des supports prêts à publier.",
   highlight: ["Affiches, identités", "captations d'événements"],
-  photos: [
-    { label: "Graphisme", src: "" },
-    { label: "Vidéo", src: "" },
-    { label: "Photo", src: "" },
-  ] as Photo[],
 };
+
+/**
+ * Réalisations visuelles : elles défilent en bandeau sous la section.
+ * Pour en ajouter une, mets l'image dans /public et ajoute une ligne ici.
+ */
+export const realisations: Photo[] = [
+  { label: "Affiche · Grain de Café", src: "/caf%C3%A9et%20the.png" },
+  { label: "Identité visuelle · Ovoafrica", src: "/identite.jpeg" },
+  { label: "Étiquette · Néova", src: "/shampoing.png" },
+  { label: "Captation d'événement", src: "/montage.jpeg" },
+  { label: "Étiquette · Chaléa", src: "/calea.png" },
+  { label: "Étiquette · Racina", src: "/racina.png" },
+  { label: "Reels", src: "/reelmaker.jpeg" },
+  { label: "Étiquette · Vitalya", src: "/Vitalya.png" },
+];
 
 /** Texte de la section « À propos ». Modifie-le librement. */
 export const about = {
   title: "À propos de moi",
-  text: "Je m'appelle Rosine, je vis à Abidjan et je construis des applications mobiles en Flutter. J'ai commencé par le web, puis j'ai trouvé ce qui me plaît vraiment : des interfaces qui répondent au doigt sans hésiter, et du code qu'une autre développeuse peut reprendre sans notice. En dehors du code, j'ai piloté des produits comme Product Manager — j'ai appris à comprendre pourquoi une fonctionnalité est demandée avant de l'écrire.",
+  text:
+    "Je m'appelle Rosine, je vis à Abidjan et je construis des applications web et mobiles. J'aime les interfaces fluides et le code facile à reprendre. Mon passage par le Product Management m'a appris à comprendre un besoin avant de le développer.",
 };
 
 export const contact = {
@@ -107,13 +121,38 @@ export type Project = {
   meta: string;
   description: string;
   stack: string[];
-  /** Optionnel : mets une image dans /public et indique son chemin, ex. "/projets/flot.png" */
+  /** Optionnel : mets une image dans /public et indique son chemin, ex. "/meteo.jpeg" */
   image?: string;
+  /** "mobile" pour une capture d'écran de téléphone (verticale), "web" pour une capture de site. */
+  kind?: "mobile" | "web";
   /** Optionnel : lien vers le dépôt ou la démo */
   href?: string;
 };
 
 export const projectGroups: { title: string; items: Project[] }[] = [
+  {
+    title: "Produit web",
+    items: [
+      {
+        name: "Alpha Sécurité",
+        meta: "Product Manager",
+        description:
+          "Application de sécurité privée : réserver un agent certifié, rejoindre une communauté de vigilance citoyenne et lancer une alerte locale. J'y ai piloté le produit en télétravail comme Product Manager : roadmap, priorisation et coordination de l'équipe.",
+        stack: ["Product Management", "Roadmap", "Flutter", "Vue.js"],
+        image: "/alpha.png",
+        kind: "web",
+      },
+      {
+        name: "Stediihome",
+        meta: "Product Manager",
+        description:
+          "Plateforme qui met en relation des employeurs et du personnel domestique au profil vérifié. J'y ai tenu le rôle de Product Manager : roadmap, priorisation et coordination de l'équipe à distance.",
+        stack: ["Product Management", "Roadmap", "UI/UX", "Flutter", "Vue.js"],
+        image: "/product.png",
+        kind: "web",
+      },
+    ],
+  },
   {
     title: "Applications mobiles",
     items: [
@@ -123,6 +162,8 @@ export const projectGroups: { title: string; items: Project[] }[] = [
         description:
           "Application de création et de suivi d'événements. Terrain d'essai pour une navigation fluide et une interface pensée pour le pouce plutôt que pour la souris.",
         stack: ["Flutter", "UI/UX", "Provider"],
+        image: "/event.jpeg",
+        kind: "mobile",
       },
       {
         name: "Météo",
@@ -130,6 +171,8 @@ export const projectGroups: { title: string; items: Project[] }[] = [
         description:
           "Prévisions par géolocalisation avec visualisation des données climatiques sur plusieurs jours, alimentées par une API open source en temps réel.",
         stack: ["Flutter", "API REST", "Dart"],
+        image: "/meteo.jpeg",
+        kind: "mobile",
       },
     ],
   },
@@ -137,43 +180,115 @@ export const projectGroups: { title: string; items: Project[] }[] = [
 
 export const skillGroups: { title: string; items: string[]; hot?: string[] }[] = [
   {
-    title: "Mobile",
+    title: "Frontend & Mobile",
     items: [
-      "Flutter",
-      "Dart",
-      "React Native",
-      "MVVM",
-      "Clean Architecture",
-      "Provider",
-      "API REST",
-      "Google Maps API",
-      "Tests unitaires",
+      "HTML5 / CSS3",
+      "React",
+      "Flutter / Dart",
+      "JavaScript / TypeScript",
+      "Next.js",
+      "Responsive design",
     ],
-    hot: ["Flutter", "Dart"],
+    hot: ["Flutter / Dart", "React"],
   },
-  { title: "Web", items: ["Laravel", "PHP", "JavaScript", "HTML", "CSS"] },
-  { title: "Données", items: ["MySQL", "PostgreSQL"] },
   {
-    title: "Outils & méthodes",
-    items: ["Git", "GitHub", "GitLab", "Jira", "Agile / Scrum", "Revues de code", "Figma", "Adobe XD"],
+    title: "Backend & Bases de données",
+    items: ["Laravel", "Java / Spring Boot (base)", "SQL", "PostgreSQL", "MySQL", "API REST"],
+  },
+  {
+    title: "Outils & Design",
+    items: [
+      "Jira",
+      "GitLab",
+      "GitHub",
+      "Linear",
+      "Slack",
+      "Figma",
+      "Canva",
+      "Photoshop",
+      "CapCut",
+      "IA & Productivité",
+    ],
+    hot: ["Figma"],
   },
 ];
 
-export type TimelineItem = { when: string; title: string; who: string; current?: boolean };
+/** Qualités personnelles, affichées à côté des compétences. */
+export const qualities: string[] = [
+  "Créativité",
+  "Capacité d'adaptation",
+  "Excellentes compétences relationnelles",
+  "Esprit d'équipe",
+  "Autonome",
+];
+
+export type TimelineItem = {
+  when: string;
+  title: string;
+  who: string;
+  current?: boolean;
+  /** Optionnel : une phrase sur l'entreprise ou le produit. */
+  about?: string;
+  /** Optionnel : ce que tu y as fait, une ligne par point. */
+  points?: string[];
+};
 
 export const experience: TimelineItem[] = [
-  { when: "OCT. 2025 — MARS 2026", title: "Développeuse d'applications mobiles", who: "CapCoding-Studio", current: true },
-  { when: "SEPT. 2025", title: "Product Manager", who: "Stediihome" },
-  { when: "JUIN — OCT. 2025", title: "Développeuse mobile, prestataire", who: "Flot." },
-  { when: "JUIL. 2025", title: "Product Manager", who: "Alpha Sécurité · télétravail" },
-  { when: "JUIL. 2024 — JUIL. 2025", title: "Développeuse web", who: "DUGHU" },
-  { when: "JUIL. 2023 — JUIL. 2024", title: "Développeuse web et mobile, stage", who: "Simplon Côte d'Ivoire" },
+  {
+    when: "MARS 2026 — AUJOURD'HUI",
+    title: "Développeuse freelance",
+    who: "Indépendante",
+    current: true,
+    points: [
+      "Conception et développement de sites et d'applications web et mobile.",
+      "Conception d'interfaces et intégration de maquettes UI/UX.",
+    ],
+  },
+  {
+    when: "OCT. 2025 — MARS 2026",
+    title: "Développeuse d'application mobile",
+    who: "CapCoding-Studio · à distance",
+    about:
+      "Hygie CapCoding est une solution simple et efficace qui digitalise et centralise tous les relevés d'hygiène importants en cuisine.",
+    points: [
+      "Conception et intégration d'interfaces mobiles.",
+      "Développement de fonctionnalités avec Flutter et Dart.",
+      "Mise en place de Clean Architecture et MVVM.",
+      "Collaboration avec les équipes Design et Backend.",
+      "Participation au suivi Agile du projet.",
+    ],
+  },
+  {
+    when: "JUIN — OCT. 2025",
+    title: "Développeuse mobile prestataire",
+    who: "Flot.",
+    about:
+      "Flot permet aux chauffeurs VTC d'Abidjan de devenir propriétaires de leur véhicule électrique, grâce à un financement accessible.",
+    points: [
+      "Développement de l'application mobile Flot avec Flutter.",
+      "Mise en place de l'architecture MVVM.",
+      "Intégration des API REST et collaboration avec l'équipe Backend.",
+      "Implémentation de la géolocalisation avec Radar et Google Maps.",
+      "Développement de tests unitaires pour améliorer la fiabilité de l'application.",
+    ],
+  },
+  {
+    when: "JUIL. 2024 — JUIL. 2025",
+    title: "Développeuse web",
+    who: "DUGHU",
+    about:
+      "Dughu Develop est une entreprise innovante spécialisée dans le développement de plateformes numériques à fort impact.",
+    points: [
+      "Création des sites Dughu et Deeltoo : backend et frontend avec Laravel.",
+      "Collaboration avec les équipes backend et design pour intégrer les fonctionnalités et optimiser l'expérience utilisateur.",
+      "Travail en équipe, intégration responsive et gestion de projet agile.",
+    ],
+  },
 ];
 
 export const education: TimelineItem[] = [
-  { when: "2022 — 2024", title: "Licence 3, bases de données", who: "Université Virtuelle de Côte d'Ivoire" },
-  { when: "2023 — 2024", title: "Certificat développement web et mobile", who: "Simplon Côte d'Ivoire" },
-  { when: "2021", title: "Baccalauréat série D", who: "Lycée Antoine Gauze, Daloa" },
+  { when: "2022 — 2024", title: "Licence en bases de données", who: "Université Virtuelle de Côte d'Ivoire" },
+  { when: "2023 — 2024", title: "Certificat en développement web et mobile", who: "Simplon Côte d'Ivoire" },
 ];
 
 /** Liste à plat des projets, dans l'ordre d'affichage du diaporama. */
