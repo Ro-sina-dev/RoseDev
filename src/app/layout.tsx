@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Inter, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Manrope, JetBrains_Mono } from "next/font/google";
 import ThemeScript from "@/components/ThemeScript";
 import { identity } from "@/data/portfolio";
 import "./globals.css";
@@ -10,9 +10,9 @@ const display = Plus_Jakarta_Sans({
   variable: "--font-display",
   display: "swap",
 });
-const body = Inter({
+const body = Manrope({
   subsets: ["latin"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-body",
   display: "swap",
 });

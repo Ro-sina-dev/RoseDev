@@ -120,7 +120,7 @@ export default function Nav() {
         </button>
       </div>
 
-      <div className="menu" id="menu" inert={!open}>
+      <div className="menu" id="menu" inert={!open} data-lenis-prevent>
         <nav aria-label="Menu">
           {NAV_LINKS.map((link, i) => (
             <a

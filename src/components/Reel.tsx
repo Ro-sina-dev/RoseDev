@@ -57,6 +57,7 @@ export default function Reel({ works }: { works: Photo[] }) {
       <dialog
         ref={dialogRef}
         className="viewer"
+        data-lenis-prevent
         aria-label={current?.label}
         onClose={() => setIndex(null)}
         onClick={(e) => e.target === e.currentTarget && setIndex(null)}

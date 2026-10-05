@@ -1,8 +1,9 @@
 "use client";
 
 /* Choisit le thème avant le premier affichage, pour éviter un flash : le choix
-   enregistré s'il existe, sinon le réglage clair/sombre du système. */
-const script = `try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t}catch(e){}`;
+   enregistré s'il existe, sinon le réglage clair/sombre du système. Signale
+   aussi que l'écran d'accueil (Intro.tsx) doit s'afficher, à chaque chargement. */
+const script = `try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t}catch(e){}document.documentElement.dataset.intro="on"`;
 
 /**
  * Le script ne s'exécute qu'à l'analyse du HTML envoyé par le serveur. Côté

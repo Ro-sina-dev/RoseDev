@@ -1,7 +1,9 @@
 import Image from "next/image";
 import Nav from "@/components/Nav";
+import Intro from "@/components/Intro";
 import Motion from "@/components/Motion";
 import Reel from "@/components/Reel";
+import Tablet from "@/components/Tablet";
 import {
   ArrowDown,
   ArrowUpRight,
@@ -113,13 +115,15 @@ function Gallery({ photos }: { photos: Photo[] }) {
 
 export default function Home() {
   const titleWords = hero.title.split(" ");
-  const marquee = skillGroups.flatMap((g) => g.items);
+  /* Tous les outils des groupes de compétences, dans l'ordre. */
+  const stack = skillGroups.flatMap((g) => g.items);
   const projects = projectGroups.flatMap((g) => g.items.map((item) => ({ ...item, group: g.title })));
   /* Le premier bloc du profil reprend le texte « À propos » : on ne l'affiche pas deux fois. */
   const methods = profile.blocks.slice(1);
 
   return (
     <>
+      <Intro />
       <Motion />
       <Nav />
 
@@ -190,18 +194,26 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── Bandeau défilant ────────────────────────────────── */}
-        <div className="marquee" aria-hidden="true">
-          <div className="marquee-track">
-            {[0, 1].map((copy) => (
-              <ul key={copy}>
-                {marquee.map((skill) => (
-                  <li key={skill}>{skill}</li>
+        {/* ── Stack ───────────────────────────────────────────── */}
+        <section className="stack" aria-label="Ma stack">
+          {/* Deux rangées qui défilent en sens inverse ; chaque liste est
+              doublée pour boucler sans saut. */}
+          <div className="stack-rows" data-reveal>
+            {[0, 1].map((row) => (
+              <div className="stack-row" key={row}>
+                {[0, 1].map((copy) => (
+                  <ul key={copy} aria-hidden={copy === 1 ? true : undefined}>
+                    {stack
+                      .filter((_, i) => i % 2 === row)
+                      .map((tech) => (
+                        <li key={tech}>{tech}</li>
+                      ))}
+                  </ul>
                 ))}
-              </ul>
+              </div>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* ── À propos ────────────────────────────────────────── */}
         <section className="section" id="a-propos">
@@ -240,21 +252,7 @@ export default function Home() {
               title="De la maquette au code, sur mobile et sur le web"
             />
 
-            <div className="skills">
-              {[...skillGroups, { title: "Qualités", items: qualities, hot: undefined }].map((group, i) => (
-                <article className="skill" key={group.title} data-reveal data-spot style={delay(i)}>
-                  <p className="skill-index">{String(i + 1).padStart(2, "0")}</p>
-                  <h3>{group.title}</h3>
-                  <ul className="chips">
-                    {group.items.map((item) => (
-                      <li key={item} className={group.hot?.includes(item) ? "is-hot" : undefined}>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
-            </div>
+            <Tablet groups={[...skillGroups, { title: "Qualités", items: qualities }]} />
           </div>
         </section>
 

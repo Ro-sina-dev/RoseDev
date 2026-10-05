@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "lenis";
+import "lenis/dist/lenis.css";
 
 /**
  * Animations pilotées par le défilement et le pointeur. Le composant n'affiche
- * rien : il écrit des classes et des variables CSS, le rendu reste au CSS.
- * Sans JavaScript ou avec « réduire les animations », tout le contenu reste
- * visible tel quel.
+ * rien : Lenis adoucit le défilement, GSAP fait apparaître et disparaître les
+ * blocs marqués `data-reveal`. Sans JavaScript ou avec « réduire les
+ * animations », tout le contenu reste visible tel quel.
  */
 export default function Motion() {
   useEffect(() => {
@@ -39,31 +43,43 @@ export default function Motion() {
     ];
 
     if (!reduced) {
-      /* Ce qui est déjà à l'écran au chargement reste affiché : on ne masque
-         que ce qui se trouve plus bas. */
-      const targets = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
-      for (const el of targets) {
-        if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add("in");
-      }
-      root.dataset.motion = "on";
+      gsap.registerPlugin(ScrollTrigger);
 
-      /* Entrée quand l'élément arrive à l'écran, sortie quand il le quitte :
-         vers le haut s'il est passé au-dessus, vers le bas sinon. */
-      const observer = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            const el = entry.target as HTMLElement;
-            if (entry.intersectionRatio >= 0.08) {
-              el.classList.add("in");
-            } else if (!entry.isIntersecting) {
-              el.classList.remove("in");
-              el.dataset.exit = entry.boundingClientRect.top < 0 ? "up" : "down";
-            }
-          }
-        },
-        { rootMargin: "0px 0px -8% 0px", threshold: [0, 0.08] }
-      );
-      targets.forEach((el) => observer.observe(el));
+      /* Défilement adouci, cadencé par l'horloge de GSAP. Les liens du menu
+         s'arrêtent sous la barre de navigation grâce au scroll-padding du CSS. */
+      const lenis = new Lenis({ anchors: true });
+      lenis.on("scroll", ScrollTrigger.update);
+      const tick = (time: number) => lenis.raf(time * 1000);
+      gsap.ticker.add(tick);
+      gsap.ticker.lagSmoothing(0);
+
+      /* Entrée quand le bloc arrive à l'écran, sortie quand il le quitte :
+         vers le haut s'il passe au-dessus, vers le bas sinon. Le décalage passe
+         par la variable --ry (lue par `translate` dans le CSS) pour ne pas
+         toucher au `transform` des survols. */
+      const show = (els: Element[]) =>
+        gsap.to(els, {
+          opacity: 1,
+          "--ry": 0,
+          duration: 1,
+          ease: "power3.out",
+          stagger: 0.08,
+          overwrite: true,
+        });
+      const hide = (els: Element[], offset: number) =>
+        gsap.to(els, { opacity: 0, "--ry": offset, duration: 0.5, ease: "power2.in", overwrite: true });
+
+      const ctx = gsap.context(() => {
+        gsap.set("[data-reveal]", { opacity: 0, "--ry": 40 });
+        ScrollTrigger.batch("[data-reveal]", {
+          start: "top 92%",
+          end: "bottom 4%",
+          onEnter: show,
+          onEnterBack: show,
+          onLeave: (els) => hide(els, -40),
+          onLeaveBack: (els) => hide(els, 40),
+        });
+      });
 
       /* Halo qui suit la souris sur les cartes. */
       const onMove = (e: PointerEvent) => {
@@ -77,9 +93,10 @@ export default function Motion() {
       document.addEventListener("pointermove", onMove, { passive: true });
 
       cleanups.push(() => {
-        observer.disconnect();
+        ctx.revert();
+        gsap.ticker.remove(tick);
+        lenis.destroy();
         document.removeEventListener("pointermove", onMove);
-        delete root.dataset.motion;
       });
     }
 
