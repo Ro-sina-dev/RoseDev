@@ -1,17 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import { Instrument_Serif, Manrope, JetBrains_Mono } from "next/font/google";
 import { identity } from "@/data/portfolio";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({
+const display = Instrument_Serif({
   subsets: ["latin"],
-  weight: ["400", "600", "800"],
+  weight: "400",
+  style: ["normal", "italic"],
   variable: "--font-display",
   display: "swap",
 });
-const body = Instrument_Sans({
+const body = Manrope({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-body",
   display: "swap",
 });
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0F1216",
+  themeColor: "#F6F1E9",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",

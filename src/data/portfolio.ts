@@ -13,7 +13,7 @@ export const identity = {
   country: "Côte d'Ivoire",
   tagline: "Je conçois des applications que l'on garde sur son écran d'accueil.",
   homeIntro:
-    "Développeuse mobile Flutter. Ce portfolio est une application — touchez une icône pour l'explorer.",
+    "Designer Développeuse. Ce portfolio est une application — touchez une icône pour l'explorer.",
   availability: {
     title: "Disponible pour un poste",
     detail: "Abidjan · CDI ou freelance",
@@ -35,7 +35,7 @@ export const hero = {
 
 /**
  * Photo d'une section illustrée. Laisse `src` vide tant que tu n'as pas
- * l'image : un cadre avec la légende s'affiche à la place.
+ * l'image : une vignette numérotée avec la légende s'affiche à la place.
  */
 export type Photo = { src?: string; label: string };
 
